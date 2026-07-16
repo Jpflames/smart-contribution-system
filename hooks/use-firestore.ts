@@ -551,14 +551,21 @@ export function useCollection<T = any>(collectionName: string, filters?: { field
         queryRef = query(qRef, ...firestoreWhereClauses);
       }
       
-      const unsubscribe = onSnapshot(queryRef, (snapshot: any) => {
-        const items: any[] = [];
-        snapshot.forEach((docSnap: any) => {
-          items.push({ id: docSnap.id, ...docSnap.data() });
-        });
-        setData(items);
-        setLoading(false);
-      });
+      const unsubscribe = onSnapshot(
+        queryRef,
+        (snapshot: any) => {
+          const items: any[] = [];
+          snapshot.forEach((docSnap: any) => {
+            items.push({ id: docSnap.id, ...docSnap.data() });
+          });
+          setData(items);
+          setLoading(false);
+        },
+        (error: any) => {
+          console.warn(`Firestore collection snapshot listener failed: ${error.message}`);
+          setLoading(false);
+        }
+      );
       return unsubscribe;
     } else {
       let localItems = getLocalData(collectionName);
@@ -619,14 +626,21 @@ export function useDocument<T = any>(collectionName: string, docId: string) {
 
     if (isCloudMode) {
       const docRef = doc(db, collectionName, docId);
-      const unsubscribe = onSnapshot(docRef, (docSnap) => {
-        if (docSnap.exists()) {
-          setData({ id: docSnap.id, ...docSnap.data() } as any);
-        } else {
-          setData(null);
+      const unsubscribe = onSnapshot(
+        docRef,
+        (docSnap) => {
+          if (docSnap.exists()) {
+            setData({ id: docSnap.id, ...docSnap.data() } as any);
+          } else {
+            setData(null);
+          }
+          setLoading(false);
+        },
+        (error: any) => {
+          console.warn(`Firestore document snapshot listener failed: ${error.message}`);
+          setLoading(false);
         }
-        setLoading(false);
-      });
+      );
       return unsubscribe;
     } else {
       const fetchDoc = () => {

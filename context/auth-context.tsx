@@ -253,15 +253,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoading(true);
     try {
       if (isCloudMode && auth) {
-        await signOut(auth);
-      } else {
-        localStorage.removeItem('coopsync_session');
-        setUser(null);
-        window.dispatchEvent(new Event('coopsync_session_changed'));
+        try {
+          await signOut(auth);
+        } catch (authErr) {
+          console.warn('Firebase Auth signOut failed (network offline), forcing local logout:', authErr);
+        }
       }
     } catch (err) {
       console.error('Error logging out:', err);
     } finally {
+      localStorage.removeItem('coopsync_session');
+      setUser(null);
+      window.dispatchEvent(new Event('coopsync_session_changed'));
       setLoading(false);
     }
   };

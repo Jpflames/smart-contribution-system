@@ -5,6 +5,8 @@
   --foreground: #f8fafc; /* Slate 50 */
   --card-bg: rgba(15, 23, 42, 0.45); /* Glassmorphic Slate 900 */
   --card-border: rgba(255, 255, 255, 0.08);
+  --font-geist-sans: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-geist-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 @theme inline {
