@@ -56,12 +56,12 @@ export default function DigitalId({ member, coop }: DigitalIdProps) {
             <div className="flex items-center justify-between z-10">
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center font-black text-white text-xs shadow-md">
-                  C
+                  D
                 </div>
                 <div>
                   <h3 className={`text-[9px] font-bold uppercase tracking-widest ${
                     isDarkCard ? 'text-slate-400' : 'text-slate-500'
-                  }`}>COOPSYNC ID</h3>
+                  }`}>DCCMS ID</h3>
                   <p className="text-[9px] text-indigo-500 font-bold uppercase tracking-wider truncate max-w-[150px]">
                     {coop?.name || 'GLOBAL MEMBER'}
                   </p>
@@ -190,7 +190,7 @@ export default function DigitalId({ member, coop }: DigitalIdProps) {
               <p className={`text-[7px] leading-normal ${
                 isDarkCard ? 'text-slate-500' : 'text-slate-400'
               }`}>
-                Scan ID code to verify membership status on the CoopSync Terminal.
+                Scan ID code to verify membership status on the DCCMS Terminal.
               </p>
             </div>
 

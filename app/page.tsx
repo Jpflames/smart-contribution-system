@@ -20,7 +20,7 @@ export default function Home() {
             C
           </div>
           <span className="text-xl font-black bg-gradient-to-r from-slate-50 to-indigo-200 bg-clip-text text-transparent">
-            CoopSync
+            DCCMS
           </span>
         </div>
 
@@ -67,7 +67,7 @@ export default function Home() {
           </h1>
 
           <p className="text-base md:text-lg text-slate-400 leading-relaxed max-w-xl mx-auto md:mx-0">
-            CoopSync combines tokenized recurring card debits, grace periods, automated penalty ledgers, and AI-driven risk scoring to streamline financial contributions and eliminate delinquencies.
+            DCCMS combines tokenized recurring card debits, grace periods, automated penalty ledgers, and AI-driven risk scoring to streamline financial contributions and eliminate delinquencies.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
@@ -85,15 +85,7 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* Quick seeded login credentials instructions */}
-          <div className="p-4 rounded-2xl bg-indigo-950/20 border border-indigo-500/10 max-w-md mx-auto md:mx-0">
-            <span className="text-xs font-bold text-indigo-400 block mb-1">💡 Sandbox Evaluator Quick Access</span>
-            <p className="text-[11px] text-slate-400 leading-relaxed">
-              No setup required. Click <strong>Access Portal</strong> and use credentials like 
-              <code className="text-slate-200 px-1 font-mono">admin@coopsync.com</code> or 
-              <code className="text-slate-200 px-1 font-mono">member1@coopsync.com</code> with any password to instantly switch roles.
-            </p>
-          </div>
+
         </div>
 
         {/* FEATURE SHIELD CARDS */}
@@ -151,7 +143,7 @@ export default function Home() {
 
       {/* FOOTER */}
       <footer className="w-full max-w-7xl mx-auto px-6 py-6 border-t border-slate-900 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500 z-10">
-        <p>© {new Date().getFullYear()} CoopSync. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} DCCMS. All rights reserved.</p>
         <p>Built with Next.js 16 App Router, Firebase and Paystack Gateway.</p>
       </footer>
     </div>

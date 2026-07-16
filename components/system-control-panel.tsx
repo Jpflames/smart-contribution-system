@@ -4,14 +4,14 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/auth-context';
 import { UserRole } from '@/types';
 
-export default function SimulationPanel() {
+export default function SystemControlPanel() {
   const { user, simulateRoleChange, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
   const [cronRunning, setCronRunning] = useState(false);
   const [cronResult, setCronResult] = useState<string | null>(null);
 
-  // Load simulated notifications
+  // Load testing notification logs
   const loadNotifications = () => {
     if (typeof window === 'undefined') return;
     const log = localStorage.getItem('coopsync_notifications_log');
@@ -40,7 +40,7 @@ export default function SimulationPanel() {
       setCronResult(data.message || 'Auto-debit scheduler executed successfully.');
       loadNotifications();
     } catch (err: any) {
-      setCronResult(`Cron failed: ${err.message}`);
+      setCronResult(`Auto-debit check failed: ${err.message}`);
     } finally {
       setCronRunning(false);
     }
@@ -55,7 +55,7 @@ export default function SimulationPanel() {
     const collections = ['users', 'cooperatives', 'plans', 'paymentTokens', 'payments', 'wallets', 'withdrawalRequests', 'loans', 'auditLogs', 'notifications'];
     collections.forEach(col => localStorage.removeItem(`coopsync_db_${col}`));
     
-    alert('Local Database reset and reseeded with initial values.');
+    alert('Local offline database re-seeded with initial values.');
     logout();
     window.location.href = '/';
   };
@@ -66,7 +66,7 @@ export default function SimulationPanel() {
       <button 
         onClick={() => setIsOpen(!isOpen)}
         className="w-14 h-14 rounded-full btn-primary-gradient flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 hover:scale-105 duration-200"
-        title="Simulation Console"
+        title="System Control Panel"
       >
         {isOpen ? (
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-6 h-6">
@@ -80,12 +80,12 @@ export default function SimulationPanel() {
         )}
       </button>
 
-      {/* Expanded Simulation Panel */}
+      {/* Expanded Control Box */}
       {isOpen && (
         <div className="absolute bottom-16 right-0 w-80 md:w-96 max-h-[85vh] overflow-y-auto glass-panel rounded-3xl p-6 shadow-2xl border border-white/10 flex flex-col gap-6 animate-in slide-in-from-bottom-5 duration-200">
           <div>
-            <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Simulation Console</h2>
-            <p className="text-[11px] text-slate-400">Control and evaluate CoopSync’s financial operations and routing logic.</p>
+            <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-400">System Control Panel</h2>
+            <p className="text-[11px] text-slate-400">Audit and control financial operations, routing checks, and billing logs.</p>
           </div>
 
           {/* Quick Role switcher */}
@@ -114,10 +114,10 @@ export default function SimulationPanel() {
                 onClick={() => handleRoleSwitch('member')}
                 className="p-2 rounded-xl text-left bg-slate-950/60 hover:bg-violet-600/20 text-xs font-medium border border-white/5 hover:border-violet-500/40 text-slate-300 transition-all"
               >
-                Member John Doe
+                Member (John Doe)
               </button>
             </div>
-            <p className="text-[10px] text-slate-500 italic">Current User: {user ? `${user.name} (${user.role})` : 'Guest'}</p>
+            <p className="text-[10px] text-slate-500 italic">Active Role: {user ? `${user.name} (${user.role})` : 'Guest'}</p>
           </div>
 
           {/* Cron Trigger */}
@@ -134,10 +134,10 @@ export default function SimulationPanel() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Running Auto-Debit Check...
+                  Processing Auto-Debit Run...
                 </>
               ) : (
-                'Trigger Auto-Debit Run (Scheduler)'
+                'Trigger Automated Card Debit Run'
               )}
             </button>
             {cronResult && (
@@ -147,10 +147,10 @@ export default function SimulationPanel() {
             )}
           </div>
 
-          {/* Simulated Messaging Queue log */}
+          {/* Outbound Messaging Outbox Log */}
           <div className="space-y-2 flex-1">
             <div className="flex justify-between items-center">
-              <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wide">SMS & Email Outbox Log</h3>
+              <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wide">SMS & Email Dispatch Queue</h3>
               <span className="text-[9px] bg-indigo-500/10 text-indigo-400 border border-indigo-500/25 px-1.5 py-0.5 rounded font-mono font-bold">
                 {notifications.length} Sent
               </span>
@@ -161,7 +161,7 @@ export default function SimulationPanel() {
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 mb-1 opacity-40">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
                 </svg>
-                <span className="text-[10px]">No messages generated yet</span>
+                <span className="text-[10px]">No notifications generated yet</span>
               </div>
             ) : (
               <div className="space-y-2 max-h-48 overflow-y-auto">
@@ -200,28 +200,13 @@ export default function SimulationPanel() {
           <div className="pt-2 border-t border-slate-800">
             <button 
               onClick={handleResetData}
-              className="w-full py-2.5 rounded-xl border border-rose-500/20 hover:bg-rose-500/10 text-rose-400 font-bold text-xs tracking-wider transition-all"
+              className="w-full py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/25 border border-rose-500/20 text-rose-400 font-bold text-xs uppercase tracking-wider transition-all"
             >
-              Reset Simulated Database
+              Reset Local Storage Database
             </button>
           </div>
         </div>
       )}
-
-      {/* Add spin animation to global styles */}
-      <style jsx global>{`
-        .animate-spin-slow {
-          animation: spin 12s linear infinite;
-        }
-        @keyframes spin {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
-        }
-      `}</style>
     </div>
   );
 }

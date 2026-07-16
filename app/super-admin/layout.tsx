@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/navigation';
 import { useAuth } from '@/context/auth-context';
-import SimulationPanel from '@/components/simulation-panel';
+import SystemControlPanel from '@/components/system-control-panel';
 
 export default function SuperAdminLayout({ children }: { children: React.ReactNode }) {
   const { user, loading, logout } = useAuth();
@@ -40,10 +40,10 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
           {/* Logo Branding */}
           <div className="flex items-center gap-2 pb-6 border-b border-slate-900">
             <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center font-black text-white text-base">
-              C
+              D
             </div>
             <div>
-              <h2 className="font-black text-slate-100 text-sm">CoopSync</h2>
+              <h2 className="font-black text-slate-100 text-sm">DCCMS</h2>
               <span className="text-[10px] text-indigo-400 font-bold uppercase tracking-widest">Super Admin</span>
             </div>
           </div>
@@ -114,8 +114,8 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
         {children}
       </main>
 
-      {/* Floating Simulation Helper Console */}
-      <SimulationPanel />
+      {/* Floating System Control Helper Panel */}
+      <SystemControlPanel />
     </div>
   );
 }

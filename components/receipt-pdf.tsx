@@ -12,7 +12,7 @@ interface ReceiptPdfProps {
 
 export default function ReceiptPdf({ payment, coopName, currency, onClose }: ReceiptPdfProps) {
   const receiptNum = `REC-${payment.id.substring(0, 8).toUpperCase()}-${new Date(payment.createdAt).getFullYear()}`;
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=coopsync-verify-payment-${payment.id}&color=020617&bgcolor=ffffff`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=dccms-verify-payment-${payment.id}&color=020617&bgcolor=ffffff`;
 
   const handlePrint = () => {
     if (typeof window === 'undefined') return;
@@ -90,9 +90,9 @@ export default function ReceiptPdf({ payment, coopName, currency, onClose }: Rec
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-white text-xs">
-                  C
+                  D
                 </div>
-                <span className="font-bold text-sm text-slate-100 tracking-tight">CoopSync</span>
+                <span className="font-bold text-sm text-slate-100 tracking-tight">DCCMS</span>
               </div>
               <h1 className="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-1">Cooperative Institution</h1>
               <p className="text-sm font-bold text-indigo-400">{coopName}</p>

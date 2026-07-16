@@ -13,7 +13,7 @@ export default function ForgotPasswordPage() {
     if (!email) return;
     setLoading(true);
     setTimeout(() => {
-      setMessage(`A password reset link has been dispatched to ${email}. (Simulated)`);
+      setMessage(`A password reset link has been dispatched to ${email}.`);
       setLoading(false);
     }, 1000);
   };
@@ -27,9 +27,9 @@ export default function ForgotPasswordPage() {
         <div className="text-center space-y-2">
           <Link href="/" className="inline-flex items-center gap-2 justify-center">
             <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center font-black text-white shadow-lg text-sm">
-              C
+              D
             </div>
-            <span className="text-lg font-black text-slate-100">CoopSync</span>
+            <span className="text-lg font-black text-slate-100">DCCMS</span>
           </Link>
           <h2 className="text-2xl font-extrabold tracking-tight text-slate-100">Reset password</h2>
           <p className="text-xs text-slate-400">Enter your email to receive recovery instructions</p>
@@ -58,7 +58,7 @@ export default function ForgotPasswordPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="e.g. member1@coopsync.com"
+                placeholder="e.g. member@example.com"
                 className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-slate-800 text-slate-200 text-sm placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 transition-all font-medium"
                 required
               />

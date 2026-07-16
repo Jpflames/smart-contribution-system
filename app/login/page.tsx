@@ -49,9 +49,9 @@ export default function LoginPage() {
         <div className="text-center space-y-2">
           <Link href="/" className="inline-flex items-center gap-2 justify-center">
             <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center font-black text-white shadow-lg text-sm">
-              C
+              D
             </div>
-            <span className="text-lg font-black text-slate-100">CoopSync</span>
+            <span className="text-lg font-black text-slate-100">DCCMS</span>
           </Link>
           <h2 className="text-2xl font-extrabold tracking-tight text-slate-100">Welcome back</h2>
           <p className="text-xs text-slate-400">Log in to manage contributions and authorize payments</p>
@@ -119,29 +119,7 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Sandbox accounts help panel */}
-        <div className="p-4 rounded-2xl bg-indigo-950/15 border border-indigo-500/10 space-y-2">
-          <span className="text-[11px] font-bold text-indigo-400 block uppercase tracking-wide">Sandbox Accounts</span>
-          <div className="grid grid-cols-2 gap-2 text-[10px] text-slate-400 font-mono">
-            <div>
-              <p className="text-[9px] uppercase tracking-wider text-slate-500 font-semibold font-sans">Role</p>
-              <p className="text-slate-300">Super Admin</p>
-              <p className="text-slate-300">Coop Admin</p>
-              <p className="text-slate-300">Treasurer</p>
-              <p className="text-slate-300">Member</p>
-            </div>
-            <div>
-              <p className="text-[9px] uppercase tracking-wider text-slate-500 font-semibold font-sans">Sandbox Email</p>
-              <p className="text-indigo-300">admin@coopsync.com</p>
-              <p className="text-indigo-300">coop@coopsync.com</p>
-              <p className="text-indigo-300">treasurer@coopsync.com</p>
-              <p className="text-indigo-300">member1@coopsync.com</p>
-            </div>
-          </div>
-          <p className="text-[9px] text-slate-500 italic mt-1 pt-1 border-t border-slate-800">
-            Use any password (e.g. "password") to authorize these accounts in simulation mode.
-          </p>
-        </div>
+
 
         <div className="text-center text-xs text-slate-500 pt-2">
           Don't have an account?{' '}

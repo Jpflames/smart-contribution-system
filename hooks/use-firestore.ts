@@ -30,7 +30,7 @@ export const seedLocalStorage = () => {
   const users = [
     {
       uid: 'super-admin-uid',
-      email: 'admin@coopsync.com',
+      email: 'admin@dccms.com',
       role: 'super_admin',
       name: 'Sarah Connor',
       phone: '+2348011111111',
@@ -42,7 +42,7 @@ export const seedLocalStorage = () => {
     },
     {
       uid: 'coop-admin-uid',
-      email: 'coop@coopsync.com',
+      email: 'coop@dccms.com',
       role: 'coop_admin',
       name: 'Adebayo Johnson',
       phone: '+2348022222222',
@@ -54,7 +54,7 @@ export const seedLocalStorage = () => {
     },
     {
       uid: 'treasurer-uid',
-      email: 'treasurer@coopsync.com',
+      email: 'treasurer@dccms.com',
       role: 'treasurer',
       name: 'Chinedu Okeke',
       phone: '+2348033333333',
@@ -66,7 +66,7 @@ export const seedLocalStorage = () => {
     },
     {
       uid: 'member-1-uid',
-      email: 'member1@coopsync.com',
+      email: 'member1@dccms.com',
       role: 'member',
       name: 'John Doe',
       phone: '+2348044444444',
@@ -89,7 +89,7 @@ export const seedLocalStorage = () => {
     },
     {
       uid: 'member-2-uid',
-      email: 'member2@coopsync.com',
+      email: 'member2@dccms.com',
       role: 'member',
       name: 'Jane Smith',
       phone: '+2348066666666',
@@ -112,7 +112,7 @@ export const seedLocalStorage = () => {
     },
     {
       uid: 'member-3-uid',
-      email: 'member3@coopsync.com',
+      email: 'member3@dccms.com',
       role: 'member',
       name: 'Bob Johnson',
       phone: '+2348088888888',
@@ -475,7 +475,7 @@ export const seedLocalStorage = () => {
     {
       id: 'log-1',
       userId: 'coop-admin-uid',
-      userEmail: 'coop@coopsync.com',
+      userEmail: 'coop@dccms.com',
       action: 'Create Plan',
       details: 'Created Weekly Silver Crop Saver Plan',
       createdAt: now
@@ -483,7 +483,7 @@ export const seedLocalStorage = () => {
     {
       id: 'log-2',
       userId: 'treasurer-uid',
-      userEmail: 'treasurer@coopsync.com',
+      userEmail: 'treasurer@dccms.com',
       action: 'Approve Withdrawal',
       details: 'Approved withdrawal request of 40,000 NGN for John Doe',
       createdAt: now

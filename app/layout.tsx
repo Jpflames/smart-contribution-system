@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CoopSync - Smart Cooperative Contribution & Automated Collection System",
+  title: "DCCMS - Digital Cooperative Contribution & Automated Collection System",
   description: "Eliminate cooperative contribution defaults with automated tokenized card debits, intelligent reminders, and AI-driven risk scoring.",
 };
 

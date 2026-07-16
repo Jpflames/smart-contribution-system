@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/auth-context';
-import { addDocument, queryDocuments, setDocument } from '@/hooks/use-firestore';
+import { addDocument, queryDocuments, setDocument, seedLocalStorage } from '@/hooks/use-firestore';
 import { initializeTransaction } from '@/lib/paystack';
 import { Cooperative } from '@/types';
 
@@ -52,6 +52,7 @@ function RegisterForm() {
   const [nokName, setNokName] = useState('');
   const [nokPhone, setNokPhone] = useState('');
   const [nokRelationship, setNokRelationship] = useState('');
+  const [kycImage, setKycImage] = useState<string | null>(null);
 
   // Card input states for Step 3 Card Tokenization
   const [cardNumber, setCardNumber] = useState('');
@@ -65,6 +66,10 @@ function RegisterForm() {
   useEffect(() => {
     const fetchCoops = async () => {
       try {
+        // Seed local storage dynamically if landing on register page first
+        if (typeof window !== 'undefined' && !localStorage.getItem('coopsync_seeded')) {
+          seedLocalStorage();
+        }
         const coops = await queryDocuments('cooperatives', []);
         setCooperatives(coops);
         if (coops.length > 0) setCoopId(coops[0].id);
@@ -87,6 +92,17 @@ function RegisterForm() {
     }
   }, [searchParams]);
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setKycImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleNextStep1 = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !email || !phone || !password || !coopId || !occupation || !address) {
@@ -99,8 +115,12 @@ function RegisterForm() {
 
   const handleNextStep2 = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!bankName || !accountNumber || !accountName || !nokName || !nokPhone || !nokRelationship) {
-      setError('Please fill in bank details and Next of Kin details.');
+    if (!bankName || !accountNumber || !accountName || !nokName || !nokPhone || !nokRelationship || !nationalId) {
+      setError('Please fill in bank details, Next of Kin, and National ID.');
+      return;
+    }
+    if (!kycImage) {
+      setError('Please upload your Passport Photograph / Government ID.');
       return;
     }
     setError(null);
@@ -123,6 +143,7 @@ function RegisterForm() {
           nationalId,
           residentialAddress: address,
           occupation,
+          idDocumentUrl: kycImage,
           nextOfKin: { name: nokName, relationship: nokRelationship, phone: nokPhone }
         },
         bankDetails: { bankName, accountNumber, accountName },
@@ -236,9 +257,9 @@ function RegisterForm() {
         <div className="flex justify-between items-center pb-4 border-b border-slate-800">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-black text-white shadow-lg text-xs">
-              C
+              D
             </div>
-            <span className="font-black text-slate-100 text-sm">CoopSync</span>
+            <span className="font-black text-slate-100 text-sm">DCCMS</span>
           </Link>
           <span className="text-[10px] uppercase font-bold text-indigo-400 tracking-wider">
             Step {step} of 3
@@ -411,24 +432,51 @@ function RegisterForm() {
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">National ID Number (Optional)</label>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">National ID Number</label>
                 <input 
                   type="text" 
                   value={nationalId} 
                   onChange={(e) => setNationalId(e.target.value)}
                   placeholder="NID-999999999"
                   className="w-full px-3 py-2.5 rounded-lg bg-slate-950/60 border border-slate-800 text-slate-200 text-xs placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 transition-all font-medium"
+                  required
                 />
               </div>
             </div>
 
-            <div className="p-4 rounded-xl border border-dashed border-slate-800 hover:border-indigo-500/30 transition-all flex flex-col items-center justify-center text-center cursor-pointer bg-slate-950/20">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 mb-2 text-slate-500">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
-              </svg>
-              <span className="text-xs font-semibold text-slate-300">Passport Photograph & ID Upload</span>
-              <span className="text-[10px] text-slate-500 mt-1">Drag and drop file or click to select (Simulated Compliant)</span>
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Government ID / Photo Upload</label>
+              <label 
+                htmlFor="kyc-file-input"
+                className="p-4 rounded-xl border border-dashed border-slate-800 hover:border-indigo-500/30 transition-all flex flex-col items-center justify-center text-center cursor-pointer bg-slate-950/20 block"
+              >
+                <input 
+                  type="file" 
+                  id="kyc-file-input" 
+                  accept="image/*" 
+                  className="hidden" 
+                  onChange={handleImageUpload}
+                />
+                {kycImage ? (
+                  <div className="space-y-2 w-full flex flex-col items-center">
+                    <img 
+                      src={kycImage} 
+                      alt="Uploaded Document" 
+                      className="max-h-24 object-contain rounded-lg border border-white/10"
+                    />
+                    <span className="text-[10px] text-indigo-400 font-bold uppercase tracking-wider">Document Selected ✓</span>
+                  </div>
+                ) : (
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 mb-1.5 text-slate-500">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
+                    </svg>
+                    <span className="text-xs font-semibold text-slate-300">Passport Photograph & ID Upload</span>
+                    <span className="text-[10px] text-slate-500 mt-1">Click to select image file (Required)</span>
+                  </>
+                )}
+              </label>
             </div>
 
             <div className="space-y-2 border-t border-slate-800 pt-3">

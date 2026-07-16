@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/auth-context';
 import { useDocument } from '@/hooks/use-firestore';
 import { Cooperative } from '@/types';
-import SimulationPanel from '@/components/simulation-panel';
+import SystemControlPanel from '@/components/system-control-panel';
 
 export default function TreasurerLayout({ children }: { children: React.ReactNode }) {
   const { user, loading, logout } = useAuth();
@@ -112,7 +112,7 @@ export default function TreasurerLayout({ children }: { children: React.ReactNod
         {children}
       </main>
 
-      <SimulationPanel />
+      <SystemControlPanel />
     </div>
   );
 }
