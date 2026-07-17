@@ -71,10 +71,25 @@ function RegisterForm() {
           seedLocalStorage();
         }
         const coops = await queryDocuments('cooperatives', []);
-        setCooperatives(coops);
-        if (coops.length > 0) setCoopId(coops[0].id);
+        if (coops && coops.length > 0) {
+          setCooperatives(coops);
+          setCoopId(coops[0].id);
+        } else {
+          const fallback = [
+            { id: 'coop-1', name: 'Lagos Agri-Save Cooperative' },
+            { id: 'coop-2', name: 'Eko Tech Savings Group' }
+          ];
+          setCooperatives(fallback as any);
+          setCoopId(fallback[0].id);
+        }
       } catch (err) {
-        console.error('Failed to load coops:', err);
+        console.warn('Failed to load coops from cloud database, using local fallbacks:', err);
+        const fallback = [
+          { id: 'coop-1', name: 'Lagos Agri-Save Cooperative' },
+          { id: 'coop-2', name: 'Eko Tech Savings Group' }
+        ];
+        setCooperatives(fallback as any);
+        setCoopId(fallback[0].id);
       }
     };
     fetchCoops();
