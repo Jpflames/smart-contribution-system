@@ -73,14 +73,12 @@ function RegisterForm() {
         const coops = await queryDocuments('cooperatives', []);
         if (coops && coops.length > 0) {
           setCooperatives(coops);
-          setCoopId(coops[0].id);
         } else {
           const fallback = [
             { id: 'coop-1', name: 'Lagos Agri-Save Cooperative' },
             { id: 'coop-2', name: 'Eko Tech Savings Group' }
           ];
           setCooperatives(fallback as any);
-          setCoopId(fallback[0].id);
         }
       } catch (err) {
         console.warn('Failed to load coops from cloud database, using local fallbacks:', err);
@@ -89,7 +87,6 @@ function RegisterForm() {
           { id: 'coop-2', name: 'Eko Tech Savings Group' }
         ];
         setCooperatives(fallback as any);
-        setCoopId(fallback[0].id);
       }
     };
     fetchCoops();
@@ -120,7 +117,7 @@ function RegisterForm() {
 
   const handleNextStep1 = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !email || !phone || !password || !coopId || !occupation || !address) {
+    if (!name || !email || !phone || !password || !occupation || !address) {
       setError('Please fill in all profile details.');
       return;
     }
@@ -162,7 +159,7 @@ function RegisterForm() {
           nextOfKin: { name: nokName, relationship: nokRelationship, phone: nokPhone }
         },
         bankDetails: { bankName, accountNumber, accountName },
-        coopId,
+        coopId: coopId || null,
         createdAt: now,
         updatedAt: now
       };
@@ -172,21 +169,24 @@ function RegisterForm() {
       setRegisteredUid(uid);
 
       // Increment cooperative member count
-      const coop = cooperatives.find(c => c.id === coopId);
-      if (coop) {
-        coop.stats.totalMembers += 1;
-        coop.stats.activeMembers += 1;
-        await setDocument('cooperatives', coopId, coop);
+      if (coopId) {
+        const coop = cooperatives.find(c => c.id === coopId);
+        if (coop) {
+          coop.stats.totalMembers += 1;
+          coop.stats.activeMembers += 1;
+          await setDocument('cooperatives', coopId, coop);
+        }
       }
 
       // Automatically create a Wallet for the member
+      const selectedCoop = coopId ? cooperatives.find(c => c.id === coopId) : null;
       await setDocument('wallets', uid, {
         id: uid,
         userId: uid,
-        coopId,
+        coopId: coopId || null,
         balance: 0,
         ledgerBalance: 0,
-        currency: coop?.settings.currency || 'NGN',
+        currency: selectedCoop?.settings?.currency || 'NGN',
         lastUpdated: now
       });
 
@@ -313,8 +313,8 @@ function RegisterForm() {
                   value={coopId}
                   onChange={(e) => setCoopId(e.target.value)}
                   className="w-full px-3 py-2.5 rounded-lg bg-slate-950/60 border border-slate-800 text-slate-200 text-xs focus:outline-none focus:border-indigo-500/50 transition-all font-medium"
-                  required
                 >
+                  <option value="" className="bg-slate-950 text-slate-400">Join a Cooperative Later</option>
                   {cooperatives.map(c => (
                     <option key={c.id} value={c.id} className="bg-slate-950 text-slate-200">
                       {c.name}
