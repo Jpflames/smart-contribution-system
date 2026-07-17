@@ -2,13 +2,13 @@
 
 import React from 'react';
 import { useAuth } from '@/context/auth-context';
-import { useCollection, useDocument } from '@/hooks/use-firestore';
+import { useCollection, useDocument, setDocument } from '@/hooks/use-firestore';
 import { calculateMemberRiskScore } from '@/lib/risk-score';
 import { Cooperative, Payment, Wallet, Loan } from '@/types';
 import DigitalId from '@/components/digital-id';
 
 export default function MemberDashboardPage() {
-  const { user } = useAuth();
+  const { user, updateProfileState } = useAuth();
 
   // Queries
   const { data: coop } = useDocument<Cooperative>('cooperatives', user?.coopId || '');
@@ -19,6 +19,7 @@ export default function MemberDashboardPage() {
   const { data: loans } = useCollection<Loan>('loans', [
     { field: 'userId', operator: '==', value: user?.uid || '' }
   ]);
+  const { data: cooperatives } = useCollection<Cooperative>('cooperatives');
 
   const currency = coop?.settings?.currency || 'NGN';
 
@@ -31,6 +32,97 @@ export default function MemberDashboardPage() {
   
   // Calculate dynamic loan eligibility
   const { score: riskScore } = calculateMemberRiskScore(user?.uid || '', payments, wallet);
+
+  const handleJoinCooperative = async (coopId: string) => {
+    if (!user) return;
+    try {
+      const selected = cooperatives.find(c => c.id === coopId);
+      const now = new Date().toISOString();
+
+      // 1. Update user profile document in Firestore
+      const updatedUser = {
+        ...user,
+        coopId
+      };
+      await setDocument('users', user.uid, updatedUser);
+
+      // 2. Increment cooperative member count in Firestore
+      if (selected) {
+        selected.stats.totalMembers += 1;
+        selected.stats.activeMembers += 1;
+        await setDocument('cooperatives', coopId, selected);
+      }
+
+      // 3. Update the member's wallet associated coopId
+      await setDocument('wallets', user.uid, {
+        id: user.uid,
+        userId: user.uid,
+        coopId,
+        balance: 0,
+        ledgerBalance: 0,
+        currency: selected?.settings?.currency || 'NGN',
+        lastUpdated: now
+      });
+
+      // 4. Update local auth profile state
+      updateProfileState({ coopId });
+    } catch (err) {
+      console.error('Failed to join cooperative:', err);
+    }
+  };
+
+  // Render Join Cooperative Screen if the member hasn't joined one
+  if (!user?.coopId) {
+    return (
+      <div className="space-y-8 animate-in fade-in duration-300">
+        <div>
+          <h1 className="text-2xl font-black text-slate-100 tracking-tight">Welcome, {user?.name}</h1>
+          <p className="text-xs text-slate-400">To start automated contributions, savings portfolios, and qualifying for loans, select and join a cooperative.</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {cooperatives.length === 0 ? (
+            <div className="p-8 text-center glass-panel rounded-3xl col-span-2 text-slate-400 text-sm">
+              No cooperatives are currently available to join. Please contact support.
+            </div>
+          ) : (
+            cooperatives.map(c => (
+              <div 
+                key={c.id} 
+                className="p-6 rounded-3xl glass-panel relative overflow-hidden flex flex-col justify-between hover:border-indigo-500/20 duration-200"
+              >
+                <div className="absolute right-0 bottom-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl"></div>
+                
+                <div className="space-y-3 mb-6">
+                  <div className="flex justify-between items-start">
+                    <span className="text-[9px] font-bold text-indigo-400 uppercase tracking-widest">Active Cooperative Group</span>
+                    <span className="text-[10px] text-slate-500 font-mono font-bold uppercase tracking-wider">{c.settings?.currency || 'NGN'} Portal</span>
+                  </div>
+                  
+                  <h3 className="text-lg font-bold text-slate-100 leading-tight">{c.name}</h3>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    Join this group to automate your recurring contributions, receive automated alerts, and qualify for interest-rate micro-loans.
+                  </p>
+
+                  <div className="flex gap-6 text-[10px] text-slate-500 font-bold border-t border-slate-900/60 pt-3">
+                    <div>Members: <span className="text-slate-300">{c.stats.totalMembers}</span></div>
+                    <div>Active Schemes: <span className="text-slate-300">2 schemes</span></div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => handleJoinCooperative(c.id)}
+                  className="w-full py-3 rounded-xl btn-primary-gradient font-bold text-white text-xs uppercase tracking-wider transition-all hover:scale-[1.01]"
+                >
+                  Join Cooperative Group
+                </button>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 animate-in fade-in duration-300">

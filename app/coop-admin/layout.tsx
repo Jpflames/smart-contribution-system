@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/auth-context';
 import { useDocument } from '@/hooks/use-firestore';
 import { Cooperative } from '@/types';
-import SystemControlPanel from '@/components/system-control-panel';
 
 export default function CoopAdminLayout({ children }: { children: React.ReactNode }) {
   const { user, loading, logout } = useAuth();
@@ -129,8 +128,6 @@ export default function CoopAdminLayout({ children }: { children: React.ReactNod
       <main className="flex-1 p-6 md:p-10 overflow-y-auto max-h-screen">
         {children}
       </main>
-
-      <SystemControlPanel />
     </div>
   );
 }
