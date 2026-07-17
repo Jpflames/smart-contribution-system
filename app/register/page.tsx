@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/auth-context';
 import { addDocument, queryDocuments, setDocument, seedLocalStorage } from '@/hooks/use-firestore';
+import { auth, isCloudMode } from '@/lib/firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { initializeTransaction } from '@/lib/paystack';
 import { Cooperative } from '@/types';
 
@@ -139,8 +141,19 @@ function RegisterForm() {
     setLoading(true);
 
     try {
-      // Create user profile record (Simulating Auth UID)
-      const uid = `user_${Math.random().toString(36).substring(2, 10)}`;
+      let uid = `user_${Math.random().toString(36).substring(2, 10)}`;
+      
+      // In Live Cloud Mode, register the user in Firebase Auth first
+      if (isCloudMode && auth) {
+        try {
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          uid = userCredential.user.uid;
+        } catch (authErr: any) {
+          setError(authErr.message || 'Failed to create user authentication account.');
+          setLoading(false);
+          return;
+        }
+      }
       const now = new Date().toISOString();
 
       const userProfile = {
